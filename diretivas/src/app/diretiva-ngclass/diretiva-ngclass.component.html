@@ -1,0 +1,23 @@
+<h1>
+  <i class="glyphicon d-flex justify-content-start align-items-center ml-5"
+    [class.glyphicon-star-empty]="!meuFavorito"
+    [class.glyphicon-star]="meuFavorito"
+    (click)="onClick()"
+  >
+  olha aki
+  </i>
+</h1>
+<br><br>
+<h1>
+  <i
+    class="glyphicon d-flex justify-content-start align-items-center ml-5"
+    [ngClass]="{
+      'glyphicon-star-empty': !meuFavorito,
+      'glyphicon-star': meuFavorito
+    }"
+    (click)="onClick()"
+  >
+  olha aki
+  </i>
+</h1>
+

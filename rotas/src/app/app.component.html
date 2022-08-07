@@ -1,0 +1,15 @@
+<nav>
+  <div class="nav-wrapper">
+    <a [routerLink]="['']" href="#" class="brand-logo right">Rotas Ng2</a>
+    <ul id="nav-mobile" class="left hide-on-med-and-down">
+      <li routerLinkActive="active"><a [routerLink]="['/login']" href="">Login</a></li>
+      <li routerLinkActive="active"><a [routerLink]="['/cursos']" href="">Cursos</a></li>
+      <li routerLinkActive="active"><a [routerLink]="['curso', idCursos.value]" href="">Curso com Id</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <p>Entre com o id do curso</p>
+  <input #idCursos>
+  <router-outlet></router-outlet>
+</div>

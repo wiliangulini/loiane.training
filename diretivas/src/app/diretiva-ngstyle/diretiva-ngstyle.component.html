@@ -1,0 +1,27 @@
+<h1><strong>Styles com property binding (style binding)!</strong></h1>
+
+<button
+  [style.backgroundColor]="ativo ? 'blue' : 'gray'"
+  [style.color]="ativo ? 'white' : 'black'"
+  [style.fontWeight]="ativo ? 'bold' : 'italic'"
+  [style.fontSize]="tamanhoFonte + 'px'"
+  (click)="mudarAtivo()"
+>
+Mudar atributo 'ativo'
+</button>
+<br><br>
+<input type="text" [(ngModel)]="tamanhoFonte">
+<br><br>
+
+<h1><strong>Styles com property binding (style binding)!</strong></h1>
+
+<button
+  [style.backgroundColor]="ativo ? 'blue' : 'gray'"
+  [style.color]="ativo ? 'white' : 'black'"
+  [style.fontWeight]="ativo ? 'bold' : 'italic'"
+  [style.fontSize]="tamanhoFonte + 'px'"
+  (click)="mudarAtivo()"
+>
+Mudar atributo 'ativo'
+</button>
+<br><br>

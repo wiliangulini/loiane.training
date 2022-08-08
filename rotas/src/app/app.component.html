@@ -4,13 +4,13 @@
     <ul id="nav-mobile" class="left hide-on-med-and-down">
       <li routerLinkActive="active"><a [routerLink]="['/login']" href="">Login</a></li>
       <li routerLinkActive="active"><a [routerLink]="['/cursos']" [queryParams]="{pagina:1}" href="">Cursos</a></li>
-      <li routerLinkActive="active"><a [routerLink]="['/curso', idCursos.value]" href="">Curso com Id</a></li>
+      <!-- <li routerLinkActive="active"><a [routerLink]="['/curso', idCursos.value]" href="">Curso com Id</a></li> -->
       <li routerLinkActive="active"><a [routerLink]="['/alunos']" href="">Alunos</a></li>
     </ul>
   </div>
 </nav>
 <div class="container">
-  <p>Entre com o id do curso</p>
-  <input (input)="0" #idCursos>
+  <!-- <p>Entre com o id do curso</p>
+  <input (input)="0" #idCursos> -->
   <router-outlet></router-outlet>
 </div>

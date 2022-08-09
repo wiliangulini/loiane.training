@@ -23,18 +23,15 @@ export class CursosComponent implements OnInit {
     this.cursos = this.cursosService.getCursos();
 
     this.inscricao = this.route.queryParams.subscribe(params => {
-      console.log(params)
       this.pagina = params['pagina'];
     })
   }
 
   ngOnDestroy(): void {
-    console.log('ngOnDestroy')
     this.inscricao.unsubscribe();
   }
 
   proxPagina() {
-    //this.pagina++;
     this.router.navigate(['/cursos'],
       { queryParams: {'pagina': ++this.pagina}});
   }

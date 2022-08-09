@@ -17,10 +17,7 @@ export class CursoDetalheComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
     private router: Router,
-    private cursosService: CursosService) {
-    // console.log(this.route)
-    // this.id = this.route.snapshot.params['id'];
-  }
+    private cursosService: CursosService) {}
 
   ngOnInit() {
     this.inscricao = this.route.params.subscribe((v: any) => {
@@ -29,13 +26,12 @@ export class CursoDetalheComponent implements OnInit {
       this.curso = this.cursosService.getCurso(this.id);
 
       if(this.curso == null) {
-        this.router.navigate(['/naoEncontrado'])
+        this.router.navigate(['/cursos/naoEncontrado'])
       }
     })
   }
 
   ngOnDestroy() {
-    console.log('destroy')
     this.inscricao.unsubscribe();
   }
 

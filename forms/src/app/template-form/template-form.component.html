@@ -51,7 +51,7 @@
           ngModel
           required
           #cep="ngModel"
-          (blur)="consultaCEP($event)"
+          (blur)="consultaCEP($event, f)"
         >
 
         <app-campo-control-erro [mostrarErro]="verificaValidTouched(cep)" msgErro="Cep é obrigatório"></app-campo-control-erro>
@@ -92,7 +92,7 @@
           class="form-control"
           id="rua"
           placeholder="rua"
-          [(ngModel)]="usuario.rua"
+          ngModel
           required
           #rua="ngModel"
         >

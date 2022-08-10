@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Form } from '@angular/forms';
+import { Form, NgForm } from '@angular/forms';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -20,9 +20,12 @@ export class TemplateFormComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSubmit(form: Form): void {
-    console.log(form)
-    //console.log(this.usuario)
+  onSubmit(form: NgForm): void {
+    //console.log(form.form.value);
+
+    this.http.post('https://httpbin.org/post', JSON.stringify(form.form.value)).subscribe((data) => {
+      console.log(data);
+    }, (err: any) => console.log(err))
   }
 
   verificaValidTouched(campo: any) {
@@ -35,7 +38,7 @@ export class TemplateFormComponent implements OnInit {
   }
 
 
-  consultaCEP(v: FocusEvent) {
+  consultaCEP(v: FocusEvent, form: any) {
     let cep: string = (<HTMLInputElement>v.target).value;
 
     //Nova variável "cep" somente com dígitos.
@@ -46,24 +49,43 @@ export class TemplateFormComponent implements OnInit {
     if(cep != '') {
       //Expressão regular para validar o CEP.
       let validacep = /^[0-9]{8}$/;
-      console.log(validacep.test(cep))
+
       //Valida o formato do CEP.
       if(validacep.test(cep)) {
 
-        // this.http.get(`//viacep.com.br/ws/${cep}/json`).pipe(map((dados: any) => {
-
-        //   dados.json()
-
-        // }))
-        // .subscribe(result => {
-
-        //   console.log(result);
-        // });
+        this.resetaDadosForm(form);
 
         this.http.get(`//viacep.com.br/ws/${cep}/json`).subscribe((dados: any) => {
-          console.log(dados)
+          console.log(dados);
+          this.populaDadosForm(dados, form);
         })
       }
     }
+  }
+
+  populaDadosForm(dados: any, formulario: NgForm) {
+
+    formulario.form.patchValue({
+      endereco: {
+        rua: dados.logradouro,
+        cep: dados.cep,
+        complemento: dados.complemento,
+        bairro: dados.bairro,
+        cidade: dados.localidade,
+        estado: dados.uf,
+      }
+    })
+  }
+
+  resetaDadosForm(formulario: any) {
+    formulario.form.patchValue({
+      endereco: {
+        rua: null,
+        complemento: null,
+        bairro: null,
+        cidade: null,
+        estado: null,
+      }
+    })
   }
 }

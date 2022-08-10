@@ -1,1 +1,34 @@
-<p>data-form works!</p>
+<form class="mt-5" [formGroup]="formulario" (ngSubmit)="onSubmit()">
+  <div class="form-group mb-3 row">
+    <div class="col-sm-12">
+      <label for="nome">Nome</label>
+    </div>
+    <div class="col-sm-12">
+      <input formControlName="nome"
+        type="text"
+        class="form-control"
+        id="nome"
+        placeholder="Nome"
+      >
+    </div>
+  </div>
+
+  <div class="form-group mb-3 row">
+    <div class="col-sm-12">
+      <label for="email">Email</label>
+    </div>
+    <div class="col-sm-12">
+      <input type="email"
+        class="form-control"
+        id="email"
+        formControlName="email"
+        placeholder="nome@email.com"
+      >
+    </div>
+  </div>
+  <br>
+  <button class="btn btn-primary" type="submit">Enviar</button>
+  <button class="btn" (click)="resetar()">Cancelar</button>
+
+  <app-form-debug [form]="formulario"></app-form-debug>
+</form>

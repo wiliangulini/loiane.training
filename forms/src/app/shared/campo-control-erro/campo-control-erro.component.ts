@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { TemplateFormComponent } from './../template-form/template-form.component';
+import { TemplateFormComponent } from '../../template-form/template-form.component';
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({

@@ -1,4 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-data-form',
@@ -7,9 +9,39 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DataFormComponent implements OnInit {
 
-  constructor() { }
+  formulario: FormGroup;
 
-  ngOnInit(): void {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient
+    ) {
+
+    this.formulario = this.fb.group({
+      nome: [null, Validators.required],
+      email: [null, [Validators.required, Validators.email]]
+    });
   }
 
+  ngOnInit(): void {
+
+  }
+
+  onSubmit() {
+    console.log(this.formulario)
+
+    this.http.post('https://httpbin.org/post', JSON.stringify(this.formulario.value)).subscribe({
+      next: data => {
+        console.log(data);
+        //reseta o form
+
+        this.resetar();
+      },
+      error: error => console.log(error)
+    });
+
+  }
+
+  resetar() {
+    this.formulario.reset();
+  }
 }

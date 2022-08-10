@@ -25,6 +25,7 @@ export class TemplateFormComponent implements OnInit {
 
     this.http.post('https://httpbin.org/post', JSON.stringify(form.form.value)).subscribe((data) => {
       console.log(data);
+      form.form.reset();
     }, (err: any) => console.log(err))
   }
 

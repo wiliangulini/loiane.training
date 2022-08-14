@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-data-form',
   templateUrl: './data-form.component.html',
-  styleUrls: ['./data-form.component.scss']
+  styleUrls: ['./data-form.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class DataFormComponent implements OnInit {
 
@@ -17,8 +18,8 @@ export class DataFormComponent implements OnInit {
     ) {
 
     this.formulario = this.fb.group({
-      nome: [null, Validators.required],
-      email: [null, [Validators.required, Validators.email]]
+      nome: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]]
     });
   }
 
@@ -34,7 +35,7 @@ export class DataFormComponent implements OnInit {
         console.log(data);
         //reseta o form
 
-        this.resetar();
+        //this.resetar();
       },
       error: error => console.log(error)
     });
@@ -43,5 +44,23 @@ export class DataFormComponent implements OnInit {
 
   resetar() {
     this.formulario.reset();
+  }
+
+
+  verificaValidTouched(campo: any) {
+    //return !this.formulario.get(campo)?.valid && this.formulario.get(campo)?.touched;
+    return !this.formulario.get(campo)?.valid && !!this.formulario.get(campo)?.touched;
+    // tentar entender pq o comentario nao deu certo mas o segundo deu.
+  }
+
+  verificaEmailInvalido() {
+    let campoEmail = this.formulario.get('email');
+    if(campoEmail?.errors) {
+      return campoEmail.errors['email'] && campoEmail.touched;
+    }
+  }
+
+  aplicaCssErro(campo: any) {
+    return {'is-invalid': this.verificaValidTouched(campo)}
   }
 }

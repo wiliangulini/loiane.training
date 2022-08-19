@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { EstadoBr } from '../shared/models/estado-br.model';
+import { DropdownService } from '../shared/services/dropdown.service';
 
 @Component({
   selector: 'app-data-form',
@@ -11,35 +13,61 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class DataFormComponent implements OnInit {
 
   formulario: FormGroup;
+  estados: EstadoBr[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private dropdownService: DropdownService
     ) {
 
     this.formulario = this.fb.group({
-      nome: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      nome: [null, Validators.required],
+      email: [null, [Validators.required, Validators.email]],
+      endereco: this.fb.group({
+        cep: [null, [Validators.required]],
+        numero: [null, [Validators.required]],
+        complemento: [null],
+        rua: [null, [Validators.required]],
+        bairro: [null, [Validators.required]],
+        cidade: [null, [Validators.required]],
+        estado: [null, [Validators.required]]
+      })
     });
   }
 
   ngOnInit(): void {
-
+    this.dropdownService.getEstadosBr();
   }
 
   onSubmit() {
-    console.log(this.formulario)
 
-    this.http.post('https://httpbin.org/post', JSON.stringify(this.formulario.value)).subscribe({
-      next: data => {
-        console.log(data);
-        //reseta o form
+    if(this.formulario.valid) {
+      this.http.post('https://httpbin.org/post', JSON.stringify(this.formulario.value)).subscribe({
+        next: data => {
+          console.log(data);
+          //reseta o form
 
-        //this.resetar();
-      },
-      error: error => console.log(error)
+          this.resetar();
+        },
+        error: error => console.log(error)
+      });
+    } else {
+      this.verificaValidacoesForm(this.formulario);
+    }
+  }
+
+  verificaValidacoesForm(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach(campo => {
+      //console.log(campo)
+      const controle = formGroup.get(campo);
+      console.log(controle)
+      controle?.markAsDirty();
+
+      if(controle instanceof FormGroup) {
+        this.verificaValidacoesForm(controle);
+      }
     });
-
   }
 
   resetar() {
@@ -47,9 +75,9 @@ export class DataFormComponent implements OnInit {
   }
 
 
-  verificaValidTouched(campo: any) {
+  verificaValidTouched(campo: string) {
     //return !this.formulario.get(campo)?.valid && this.formulario.get(campo)?.touched;
-    return !this.formulario.get(campo)?.valid && !!this.formulario.get(campo)?.touched;
+    return !this.formulario.get(campo)?.valid && !!(this.formulario.get(campo)?.touched || this.formulario.get(campo)?.dirty);
     // tentar entender pq o comentario nao deu certo mas o segundo deu.
   }
 
@@ -60,7 +88,63 @@ export class DataFormComponent implements OnInit {
     }
   }
 
-  aplicaCssErro(campo: any) {
+  aplicaCssErro(campo: string) {
     return {'is-invalid': this.verificaValidTouched(campo)}
   }
+
+  consultaCEP(event: any) {
+    let cep = this.formulario.get('endereco.cep')!.value;
+    //let cep: string = (<HTMLInputElement>event.target).value;
+    console.log(cep);
+
+    //Nova variável "cep" somente com dígitos.
+    cep = cep.replace(/\D/g, '');
+
+
+    //Verifica se campo cep possui valor informado.
+    if(cep != '') {
+      //Expressão regular para validar o CEP.
+      let validacep = /^[0-9]{8}$/;
+
+      //Valida o formato do CEP.
+      if(validacep.test(cep)) {
+
+        this.resetaDadosForm();
+
+        this.http.get(`//viacep.com.br/ws/${cep}/json`).subscribe((dados: any) => {
+          console.log(dados);
+          this.populaDadosForm(dados);
+        })
+      }
+    }
+  }
+
+  populaDadosForm(dados: any) {
+    this.formulario.patchValue({
+      endereco: {
+        rua: dados.logradouro,
+        //cep: dados.cep,
+        complemento: dados.complemento,
+        bairro: dados.bairro,
+        cidade: dados.localidade,
+        estado: dados.uf,
+      }
+    })
+
+    this.formulario.get('nome')?.setValue('Wilian Gulini');
+  }
+
+
+  resetaDadosForm() {
+    this.formulario.patchValue({
+      endereco: {
+        rua: null,
+        complemento: null,
+        bairro: null,
+        cidade: null,
+        estado: null,
+      }
+    })
+  }
+
 }

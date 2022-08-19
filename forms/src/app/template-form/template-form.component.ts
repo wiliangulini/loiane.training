@@ -24,7 +24,7 @@ export class TemplateFormComponent implements OnInit {
     //console.log(form.form.value);
 
     this.http.post('https://httpbin.org/post', JSON.stringify(form.form.value)).subscribe((data) => {
-      console.log(data);
+      
       form.form.reset();
     }, (err: any) => console.log(err))
   }
@@ -34,7 +34,6 @@ export class TemplateFormComponent implements OnInit {
   }
 
   aplicaCssErro(campo: any) {
-    console.log(campo)
     return {'invalid-feedback': this.verificaValidTouched(campo)}
   }
 
@@ -69,7 +68,7 @@ export class TemplateFormComponent implements OnInit {
     formulario.form.patchValue({
       endereco: {
         rua: dados.logradouro,
-        cep: dados.cep,
+        //cep: dados.cep,
         complemento: dados.complemento,
         bairro: dados.bairro,
         cidade: dados.localidade,

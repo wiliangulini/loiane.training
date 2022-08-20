@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+
 import { EstadoBr } from '../shared/models/estado-br.model';
 import { DropdownService } from '../shared/services/dropdown.service';
 
@@ -13,7 +15,11 @@ import { DropdownService } from '../shared/services/dropdown.service';
 export class DataFormComponent implements OnInit {
 
   formulario: FormGroup;
-  estados: EstadoBr[] = [];
+  //estados: EstadoBr[] = new Array;
+  estados: Observable<EstadoBr[]> = new Observable<EstadoBr[]>();
+  cargos: any[] = [];
+  tecnologias: any[] = [];
+  newsletterOp: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -32,12 +38,31 @@ export class DataFormComponent implements OnInit {
         bairro: [null, [Validators.required]],
         cidade: [null, [Validators.required]],
         estado: [null, [Validators.required]]
-      })
+      }),
+      cargo: [null],
+      tecnologias: [null],
+      newsletter: ['s'],
+      termos: [null, [Validators.pattern('true')]],
     });
   }
 
-  ngOnInit(): void {
-    this.dropdownService.getEstadosBr();
+  ngOnInit() {
+    // this.dropdownService.getEstadosBr().subscribe({
+    //   next: (data: any) => {
+    //     console.log(data);
+
+    //     this.estados = data;
+    //   },
+    //   error: error => console.log(error)
+    // })
+
+    this.estados = this.dropdownService.getEstadosBr();
+
+    this.cargos = this.dropdownService.getCargos();
+
+    this.tecnologias = this.dropdownService.getTecnologias();
+
+    this.newsletterOp = this.dropdownService.getNewsletter();
   }
 
   onSubmit() {
@@ -61,7 +86,7 @@ export class DataFormComponent implements OnInit {
     Object.keys(formGroup.controls).forEach(campo => {
       //console.log(campo)
       const controle = formGroup.get(campo);
-      console.log(controle)
+      //console.log(controle)
       controle?.markAsDirty();
 
       if(controle instanceof FormGroup) {
@@ -146,5 +171,20 @@ export class DataFormComponent implements OnInit {
       }
     })
   }
+
+  setarCargo() {
+    const cargo = {nome: 'Dev', nivel: 'Pleno', desc: 'Dev Pl'};
+
+    this.formulario.get('cargo')?.setValue(cargo);
+  }
+
+  compararCargos(obj1: any, obj2: any) {
+    return obj1 && obj2 ? (obj1.nome === obj2.nome && obj1.nivel === obj2.nivel) : obj1 === obj2;
+  }
+
+  setarTecnologias() {
+    this.formulario.get('tecnologias')?.setValue(['java', 'javascript', 'php']);
+  }
+
 
 }

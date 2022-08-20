@@ -103,20 +103,73 @@
       </div>
       <div class="col-md-3">
         <label for="estado">Estado</label>
-        <input type="text"
+        <select
           id="estado"
           class="form-control"
           formControlName="estado"
           [ngClass]="aplicaCssErro('endereco.estado')"
         >
+          <option [value]="estado.sigla" *ngFor="let estado of estados | async">
+            {{ estado.nome }}
+          </option>
+        </select>
         <app-campo-control-erro [mostrarErro]="verificaValidTouched('endereco.estado')" msgErro="Estado é obrigatório"></app-campo-control-erro>
       </div>
     </div>
   </div>
 
+  <div class="form-group row">
+    <div class="col-md-3">
+      <label for="cargo">Cargo</label>
+      <select
+        id="cargo"
+        class="form-control"
+        formControlName="cargo"
+        [compareWith]="compararCargos"
+      >
+        <option [ngValue]="cargo" *ngFor="let cargo of cargos">
+          {{ cargo.desc }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="tecnologias">Tecnologias</label>
+      <select
+        id="tecnologias"
+        class="form-control"
+        formControlName="tecnologias"
+        multiple
+      >
+        <option [value]="tecnologia.nome" *ngFor="let tecnologia of tecnologias">
+          {{ tecnologia.desc }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="newsletter">Newsletter</label>
+      <div class="row" id="newsletter">
+        <div class="form-check form-check-inline col-4" *ngFor="let item of newsletterOp">
+          <input class="form-check-input" type="radio" formControlName="newsletter"  [value]="item.valor">
+          <label class="form-check-label"> {{ item.desc }} </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="form-check form-check-inline col-md-3">
+      <input class="form-check-input" type="checkbox" id="termos" value="option1" formControlName="termos" [ngClass]="aplicaCssErro('termos')">
+      <label class="form-check-label" for="termos">Aceito os termos.</label>
+    </div>
+
+    <app-campo-control-erro [mostrarErro]="verificaValidTouched('termos')" msgErro="É obrigatório aceitar os termos."></app-campo-control-erro>
+  </div>
+
   <br>
-  <button class="btn btn-primary" type="submit">Enviar</button>
-  <button class="btn" (click)="resetar()">Cancelar</button>
+  <button class="btn btn-primary me-3" type="submit">Enviar</button>
+  <button class="btn btn-default me-3" (click)="resetar()">Cancelar</button>
+  <button class="btn btn-info me-3" (click)="setarCargo()">Cargo</button>
+  <button class="btn btn-info me-3" (click)="setarTecnologias()">Tecnologias</button>
 
   <app-form-debug [form]="formulario"></app-form-debug>
 </form>

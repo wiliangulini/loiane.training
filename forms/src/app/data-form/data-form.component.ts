@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 import { EstadoBr } from '../shared/models/estado-br.model';
@@ -15,11 +15,12 @@ import { DropdownService } from '../shared/services/dropdown.service';
 export class DataFormComponent implements OnInit {
 
   formulario: FormGroup;
-  //estados: EstadoBr[] = new Array;
   estados: Observable<EstadoBr[]> = new Observable<EstadoBr[]>();
   cargos: any[] = [];
   tecnologias: any[] = [];
   newsletterOp: any[] = [];
+
+  frameworks = ['Vue', 'React', 'Sencha', 'Angular'];
 
   constructor(
     private fb: FormBuilder,
@@ -43,18 +44,20 @@ export class DataFormComponent implements OnInit {
       tecnologias: [null],
       newsletter: ['s'],
       termos: [null, [Validators.pattern('true')]],
+      frameworks: this.buildFramework(),
     });
   }
 
-  ngOnInit() {
-    // this.dropdownService.getEstadosBr().subscribe({
-    //   next: (data: any) => {
-    //     console.log(data);
+  buildFramework() {
+    const values = this.frameworks.map(e => new FormControl(false));
+    return this.fb.array(values)
+  }
 
-    //     this.estados = data;
-    //   },
-    //   error: error => console.log(error)
-    // })
+  get formData() {
+    return <FormArray>this.formulario.get('frameworks');
+  }
+
+  ngOnInit() {
 
     this.estados = this.dropdownService.getEstadosBr();
 
@@ -63,12 +66,22 @@ export class DataFormComponent implements OnInit {
     this.tecnologias = this.dropdownService.getTecnologias();
 
     this.newsletterOp = this.dropdownService.getNewsletter();
+
   }
 
   onSubmit() {
+    //console.log(this.formulario)
+
+    let valueSubmit = Object.assign({}, this.formulario.value)
+    valueSubmit = Object.assign(valueSubmit, {
+      frameworks: valueSubmit.frameworks
+        .map((v: any, i: any) => v ? this.frameworks[i] : null)
+        .filter((v: any) => v)
+      })
+    console.log(valueSubmit)
 
     if(this.formulario.valid) {
-      this.http.post('https://httpbin.org/post', JSON.stringify(this.formulario.value)).subscribe({
+      this.http.post('https://httpbin.org/post', JSON.stringify(valueSubmit)).subscribe({
         next: data => {
           console.log(data);
           //reseta o form
@@ -184,6 +197,16 @@ export class DataFormComponent implements OnInit {
 
   setarTecnologias() {
     this.formulario.get('tecnologias')?.setValue(['java', 'javascript', 'php']);
+
+    console.log(this.formulario.get('frameworks')?.value);
+
+    for(let i = 0; i < this.frameworks.length; i++) {
+      console.log(this.frameworks[i])
+    }
+
+    for(let item of this.frameworks) {
+      console.log(item);
+    }
   }
 
 

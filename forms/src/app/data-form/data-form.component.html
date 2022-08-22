@@ -33,6 +33,23 @@
   </div>
 
 
+  <div class="form-group mb-3 row">
+    <div class="col-sm-12">
+      <label for="confirmarEmail">Confirmar Email</label>
+    </div>
+    <div class="col-sm-12">
+      <input type="confirmarEmail"
+        class="form-control"
+        id="confirmarEmail"
+        formControlName="confirmarEmail"
+        placeholder="nome@email.com"
+        [ngClass]="aplicaCssErro('email')"
+      >
+      <app-campo-control-erro [mostrarErro]="confirmIgualEmail()" msgErro="Emails não são iguais."></app-campo-control-erro>
+    </div>
+  </div>
+
+
   <div formGroupName="endereco">
     <div class="form-group mb-3 row">
       <div class="col-md-3">
@@ -45,7 +62,8 @@
           [ngClass]="aplicaCssErro('endereco.cep')"
           (blur)="consultaCEP($event)"
         >
-        <app-campo-control-erro [mostrarErro]="verificaValidTouched('endereco.cep')" msgErro="Cep é obrigatório"></app-campo-control-erro>
+        <app-campo-control-erro [mostrarErro]="verificaRequired('endereco.cep')" msgErro="Cep é obrigatório"></app-campo-control-erro>
+        <app-campo-control-erro [mostrarErro]="cepInvalidoFn()" msgErro="Cep Inválido"></app-campo-control-erro>
       </div>
       <div class="col-md-3">
         <label for="numero">Número</label>
@@ -185,7 +203,7 @@
         </div>
       </div>
 
-      <!-- <app-campo-control-erro [mostrarErro]="verificaValidTouched('termos')" msgErro="É obrigatório aceitar os termos."></app-campo-control-erro> -->
+      <app-campo-control-erro [mostrarErro]="verificaValidTouched('frameworks')" msgErro="Selecione uma opção."></app-campo-control-erro>
     </div>
   </div>
 

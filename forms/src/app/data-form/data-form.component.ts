@@ -3,6 +3,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 
+import { FormValidations } from '../shared/form-validations';
 import { EstadoBr } from '../shared/models/estado-br.model';
 import { DropdownService } from '../shared/services/dropdown.service';
 
@@ -31,8 +32,9 @@ export class DataFormComponent implements OnInit {
     this.formulario = this.fb.group({
       nome: [null, Validators.required],
       email: [null, [Validators.required, Validators.email]],
+      confirmarEmail: [null, [FormValidations.equalsTo('email')]],
       endereco: this.fb.group({
-        cep: [null, [Validators.required]],
+        cep: [null, [Validators.required, FormValidations.cepValidator]],
         numero: [null, [Validators.required]],
         complemento: [null],
         rua: [null, [Validators.required]],
@@ -43,14 +45,18 @@ export class DataFormComponent implements OnInit {
       cargo: [null],
       tecnologias: [null],
       newsletter: ['s'],
-      termos: [null, [Validators.pattern('true')]],
+      termos: [null, [Validators.pattern('true'), FormValidations.requiredMinCheckbox(1)]],
       frameworks: this.buildFramework(),
     });
   }
 
+  confirmIgualEmail(): any {
+    return this.formulario.get('confirmarEmail')?.hasError('equalsTo')
+  }
+
   buildFramework() {
     const values = this.frameworks.map(e => new FormControl(false));
-    return this.fb.array(values)
+    return this.fb.array(values, FormValidations.requiredMinCheckbox(1));
   }
 
   get formData() {
@@ -70,7 +76,7 @@ export class DataFormComponent implements OnInit {
   }
 
   onSubmit() {
-    //console.log(this.formulario)
+    console.log(this.formulario)
 
     let valueSubmit = Object.assign({}, this.formulario.value)
     valueSubmit = Object.assign(valueSubmit, {
@@ -115,8 +121,26 @@ export class DataFormComponent implements OnInit {
 
   verificaValidTouched(campo: string) {
     //return !this.formulario.get(campo)?.valid && this.formulario.get(campo)?.touched;
-    return !this.formulario.get(campo)?.valid && !!(this.formulario.get(campo)?.touched || this.formulario.get(campo)?.dirty);
+    return (
+      !this.formulario.get(campo)?.valid &&
+      !!(this.formulario.get(campo)?.touched || this.formulario.get(campo)?.dirty)
+    );
     // tentar entender pq o comentario nao deu certo mas o segundo deu.
+  }
+
+  verificaRequired(campo: string): any {
+
+    return (
+
+      this.formulario.get(campo)?.hasError('required') &&
+      !!(this.formulario.get(campo)?.touched || this.formulario.get(campo)?.dirty)
+
+    );
+
+  }
+
+  cepInvalidoFn(): any {
+    return this.formulario.get('endereco.cep')?.hasError('cepInvalido');
   }
 
   verificaEmailInvalido() {
@@ -142,7 +166,7 @@ export class DataFormComponent implements OnInit {
     //Verifica se campo cep possui valor informado.
     if(cep != '') {
       //Expressão regular para validar o CEP.
-      let validacep = /^[0-9]{8}$/;
+      let validacep = /^[0-9]{5}-[0-9]{3}$/;
 
       //Valida o formato do CEP.
       if(validacep.test(cep)) {

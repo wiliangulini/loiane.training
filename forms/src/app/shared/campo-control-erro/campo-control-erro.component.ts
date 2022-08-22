@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { TemplateFormComponent } from '../../template-form/template-form.component';
 import { Component, Input, OnInit } from '@angular/core';
+import { ConsultaCepService } from '../services/consulta-cep.service';
 
 @Component({
   selector: 'app-campo-control-erro',
@@ -14,8 +15,9 @@ export class CampoControlErroComponent extends TemplateFormComponent implements 
 
   @Input() nome: string = '';
 
-  constructor(HTTP: HttpClient) {
-    super(HTTP);
+  constructor(HTTP: HttpClient,
+    CS: ConsultaCepService) {
+    super(HTTP, CS);
   }
 
   override ngOnInit(): void {

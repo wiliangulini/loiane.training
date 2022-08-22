@@ -11,7 +11,7 @@
         placeholder="Nome"
         [ngClass]="aplicaCssErro('nome')"
       >
-      <app-campo-control-erro [mostrarErro]="verificaValidTouched('nome')" msgErro="Nome é obrigatório"></app-campo-control-erro>
+      <app-error-msg [control]="$any(formulario).get('nome')" label="Nome"></app-error-msg>
     </div>
   </div>
 
@@ -29,6 +29,9 @@
       >
       <app-campo-control-erro [mostrarErro]="verificaValidTouched('email')" msgErro="Email é obrigatório"></app-campo-control-erro>
       <app-campo-control-erro [mostrarErro]="verificaEmailInvalido()" msgErro="Email Inválido"></app-campo-control-erro>
+      <app-campo-control-erro [mostrarErro]="formulario.get('email')?.status === 'PENDING'" msgErro="Validando email..."></app-campo-control-erro>
+      <app-campo-control-erro [mostrarErro]="formulario.get('email')?.status === 'VALID'" msgErro="Email válido!"></app-campo-control-erro>
+      <app-campo-control-erro [mostrarErro]="emailJaCadastrado()" msgErro="Email já cadastrado"></app-campo-control-erro>
     </div>
   </div>
 
@@ -60,7 +63,7 @@
           class="form-control"
           formControlName="cep"
           [ngClass]="aplicaCssErro('endereco.cep')"
-          (blur)="consultaCEP($event)"
+          
         >
         <app-campo-control-erro [mostrarErro]="verificaRequired('endereco.cep')" msgErro="Cep é obrigatório"></app-campo-control-erro>
         <app-campo-control-erro [mostrarErro]="cepInvalidoFn()" msgErro="Cep Inválido"></app-campo-control-erro>

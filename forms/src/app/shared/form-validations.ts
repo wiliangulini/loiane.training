@@ -29,9 +29,12 @@ export class FormValidations {
 
   static cepValidator(control: FormControl) {
 
-    const cep = control.value;
+    let cep = control.value;
+
+    cep = cep?.replace(/\D/g, '');
+
     if(cep && cep !== '') {
-      const validacep = /^[0-9]{5}-[0-9]{3}$/;
+      const validacep = /^[0-9]{8}$/;
       return validacep.test(cep) ? null : { cepInvalido : true }
     }
 
@@ -61,5 +64,16 @@ export class FormValidations {
     }
 
     return validator;
+  }
+
+  static getErrorMsg(fieldName: string, validatorName: string, validatorValue?: any) {
+    const config: any = {
+      'required': `${fieldName} é obrigatório.`,
+      'minlength': `${fieldName} precisa ter no mínimo ${validatorValue.requiredLength} caracteres.`,
+      'maxlength': `${fieldName} precisa ter no máximo ${validatorValue.requiredLength} caracteres.`,
+      'cepInvalido': 'CEP Inválido.'
+    }
+
+    return config[validatorName];
   }
 }

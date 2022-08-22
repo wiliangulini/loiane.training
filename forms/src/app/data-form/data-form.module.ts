@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DataFormComponent } from './data-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { VerificaEmailService } from './services/verifica-email.service';
 
 
 
@@ -14,6 +15,7 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     ReactiveFormsModule,
     SharedModule
-  ]
+  ],
+  providers: [VerificaEmailService],
 })
 export class DataFormModule { }

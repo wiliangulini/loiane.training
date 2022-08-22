@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, map, tap, distinctUntilChanged, switchMap, EMPTY, empty } from 'rxjs';
 
 import { FormValidations } from '../shared/form-validations';
 import { EstadoBr } from '../shared/models/estado-br.model';
+import { ConsultaCepService } from '../shared/services/consulta-cep.service';
 import { DropdownService } from '../shared/services/dropdown.service';
+import { VerificaEmailService } from './services/verifica-email.service';
 
 @Component({
   selector: 'app-data-form',
@@ -26,12 +28,14 @@ export class DataFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private dropdownService: DropdownService
+    private dropdownService: DropdownService,
+    private verificaEmailService: VerificaEmailService,
+    private cepService: ConsultaCepService
     ) {
 
     this.formulario = this.fb.group({
-      nome: [null, Validators.required],
-      email: [null, [Validators.required, Validators.email]],
+      nome: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(5)]],
+      email: [null, [Validators.required, Validators.email], [this.validarEmail.bind(this)]],
       confirmarEmail: [null, [FormValidations.equalsTo('email')]],
       endereco: this.fb.group({
         cep: [null, [Validators.required, FormValidations.cepValidator]],
@@ -45,9 +49,34 @@ export class DataFormComponent implements OnInit {
       cargo: [null],
       tecnologias: [null],
       newsletter: ['s'],
-      termos: [null, [Validators.pattern('true'), FormValidations.requiredMinCheckbox(1)]],
+      termos: [null, [Validators.pattern('true')]],
       frameworks: this.buildFramework(),
     });
+  }
+
+  ngOnInit() {
+
+    //this.verificaEmailService.verificarEmail('email@example.com').subscribe();
+
+    this.estados = this.dropdownService.getEstadosBr();
+
+    this.cargos = this.dropdownService.getCargos();
+
+    this.tecnologias = this.dropdownService.getTecnologias();
+
+    this.newsletterOp = this.dropdownService.getNewsletter();
+
+    this.formulario.get('endereco.cep')?.statusChanges
+    .pipe(
+      distinctUntilChanged(),
+      tap(v => console.log('status CEP: ', v)),
+      switchMap(st => st === 'VALID' ?
+        this.cepService.consultaCEP(this.formulario.get('endereco.cep')?.value)
+        : empty()
+      )
+    )
+    .subscribe(dados => dados ? this.populaDadosForm(dados) : {});
+
   }
 
   confirmIgualEmail(): any {
@@ -61,18 +90,6 @@ export class DataFormComponent implements OnInit {
 
   get formData() {
     return <FormArray>this.formulario.get('frameworks');
-  }
-
-  ngOnInit() {
-
-    this.estados = this.dropdownService.getEstadosBr();
-
-    this.cargos = this.dropdownService.getCargos();
-
-    this.tecnologias = this.dropdownService.getTecnologias();
-
-    this.newsletterOp = this.dropdownService.getNewsletter();
-
   }
 
   onSubmit() {
@@ -154,31 +171,15 @@ export class DataFormComponent implements OnInit {
     return {'is-invalid': this.verificaValidTouched(campo)}
   }
 
-  consultaCEP(event: any) {
+  consultaCEP() {
+
     let cep = this.formulario.get('endereco.cep')!.value;
-    //let cep: string = (<HTMLInputElement>event.target).value;
-    console.log(cep);
 
-    //Nova variável "cep" somente com dígitos.
-    cep = cep.replace(/\D/g, '');
-
-
-    //Verifica se campo cep possui valor informado.
-    if(cep != '') {
-      //Expressão regular para validar o CEP.
-      let validacep = /^[0-9]{5}-[0-9]{3}$/;
-
-      //Valida o formato do CEP.
-      if(validacep.test(cep)) {
-
-        this.resetaDadosForm();
-
-        this.http.get(`//viacep.com.br/ws/${cep}/json`).subscribe((dados: any) => {
-          console.log(dados);
-          this.populaDadosForm(dados);
-        })
-      }
+    if(cep != null && cep !== '') {
+      this.cepService.consultaCEP(cep)?.subscribe((dados: any) => this.populaDadosForm(dados))
     }
+
+
   }
 
   populaDadosForm(dados: any) {
@@ -221,17 +222,16 @@ export class DataFormComponent implements OnInit {
 
   setarTecnologias() {
     this.formulario.get('tecnologias')?.setValue(['java', 'javascript', 'php']);
-
-    console.log(this.formulario.get('frameworks')?.value);
-
-    for(let i = 0; i < this.frameworks.length; i++) {
-      console.log(this.frameworks[i])
-    }
-
-    for(let item of this.frameworks) {
-      console.log(item);
-    }
   }
 
+  validarEmail(formControl: FormControl) {
+    return this.verificaEmailService.verificarEmail(formControl.value).pipe(
+      map(emailExiste => emailExiste ? { emailInvalido: true } : null)
+    )
+  }
+
+  emailJaCadastrado(): any {
+    return this.formulario.get('email')?.hasError('emailInvalido');
+  }
 
 }

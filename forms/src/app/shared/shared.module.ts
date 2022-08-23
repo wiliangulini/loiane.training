@@ -5,6 +5,8 @@ import { NgModule } from '@angular/core';
 import { CampoControlErroComponent } from './campo-control-erro/campo-control-erro.component';
 import { FormDebugComponent } from './form-debug/form-debug.component';
 import { DropdownService } from './services/dropdown.service';
+import { InputFieldComponent } from './input-field/input-field.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -12,15 +14,18 @@ import { DropdownService } from './services/dropdown.service';
   declarations: [
     FormDebugComponent,
     CampoControlErroComponent,
-    ErrorMsgComponent
+    ErrorMsgComponent,
+    InputFieldComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule
   ],
   exports: [
     FormDebugComponent,
     CampoControlErroComponent,
-    ErrorMsgComponent
+    ErrorMsgComponent,
+    InputFieldComponent,
   ],
   providers: [DropdownService],
 })

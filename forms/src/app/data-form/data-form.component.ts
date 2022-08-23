@@ -34,7 +34,7 @@ export class DataFormComponent implements OnInit {
     ) {
 
     this.formulario = this.fb.group({
-      nome: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(5)]],
+      nome: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(35)]],
       email: [null, [Validators.required, Validators.email], [this.validarEmail.bind(this)]],
       confirmarEmail: [null, [FormValidations.equalsTo('email')]],
       endereco: this.fb.group({
@@ -79,9 +79,9 @@ export class DataFormComponent implements OnInit {
 
   }
 
-  confirmIgualEmail(): any {
-    return this.formulario.get('confirmarEmail')?.hasError('equalsTo')
-  }
+  // confirmIgualEmail(): any {
+  //   return this.formulario.get('confirmarEmail')?.hasError('equalsTo')
+  // }
 
   buildFramework() {
     const values = this.frameworks.map(e => new FormControl(false));

@@ -1,4 +1,4 @@
-<div class="form-group mb-3 row">
+<div class="form-group m-0 mb-3 row">
   <label [attr.for]="id">{{ label }}</label>
   <input
     [type]="type"
@@ -9,5 +9,5 @@
     [readonly]="!!isReadOnly"
     [(ngModel)]="value"
   >
-  <app-error-msg [control]="control" [label]="label"></app-error-msg>
+  <app-error-msg class="p-0" [control]="control" [label]="label"></app-error-msg>
 </div>

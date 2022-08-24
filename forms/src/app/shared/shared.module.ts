@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
     FormDebugComponent,
     CampoControlErroComponent,
     ErrorMsgComponent,
-    InputFieldComponent
+    InputFieldComponent,
   ],
   imports: [
     CommonModule,

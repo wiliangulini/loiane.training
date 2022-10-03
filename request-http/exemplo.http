@@ -13,12 +13,10 @@ Content-Type: application/json
 
 ####
 
-PUT http://localhost:3000/cursos/2 HTTP/1.1
-content-type: application/json
+PUT http://localhost:3000/cursos/4
+Content-Type: application/json
 
-{
-  "nome": "Java"
-}
+{ "nome": "Java2" }
 
 ###
 

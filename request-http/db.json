@@ -7,6 +7,26 @@
     {
       "nome": "Angular",
       "id": 3
+    },
+    {
+      "nome": "Java2",
+      "id": 4
+    },
+    {
+      "nome": "TypeScript",
+      "id": 5
+    },
+    {
+      "nome": "Material",
+      "id": 6
+    },
+    {
+      "nome": "Java",
+      "id": 7
+    },
+    {
+      "nome": "NodeJS",
+      "id": 8
     }
   ]
 }

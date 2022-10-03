@@ -5,10 +5,11 @@
     </div>
     <div class="d-flex justify-content-end align-items-center">
       <button type="button" class="btn btn-primary" [routerLink]="['novo']">Novo Curso</button>
+      <button type="button" class="btn btn-secondary" (click)="onRefresh()">Atualizar</button>
     </div>
   </div>
   <div class="card-body">
-    <table class="table">
+    <table class="table" *ngIf="cursos$ | async as cursos; else loading">
       <thead>
       <tr>
         <th scope="col">#</th>
@@ -17,19 +18,31 @@
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <th scope="row"></th>
-        <td></td>
+      <tr *ngFor="let curso of cursos">
+        <th style="vertical-align: middle;">{{ curso.id }}</th>
+        <td style="vertical-align: middle;">{{ curso.nome }}</td>
         <td>
           <span class="d-flex justify-content-end">
-            <button class="btn btn-outline-warning mb-1 btn-sm">Atualizar</button>
-
-            <button class="btn btn-outline-danger mb-1 btn-sm">Remover</button>
+            <button class="btn btn-outline-warning m-1 btn-sm" (click)="onEdit(curso.id)">Atualizar</button>
+            <button class="btn btn-outline-danger m-1 btn-sm">Remover</button>
           </span>
         </td>
       </tr>
       </tbody>
     </table>
+
+    <ng-template #loading>
+      <span>Carregando Cursos...</span>
+    </ng-template>
+
+<!--    <ng-template #loadingError>-->
+<!--      <div *ngIf="error$ | async; else loading">-->
+<!--        Erro ao carregar cursos. Tente novamente mais tarde.-->
+<!--      </div>-->
+<!--      <ng-template #loading>-->
+<!--        <span>Carregando Cursos...</span>-->
+<!--      </ng-template>-->
+<!--    </ng-template>-->
   </div>
 </div>
 

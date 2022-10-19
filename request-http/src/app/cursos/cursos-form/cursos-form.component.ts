@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {CursosService} from '../cursos.service';
-import {AlertModalService} from "../../shared/alert-modal.service";
-import {Location} from "@angular/common";
+import { Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import {map, switchMap} from "rxjs";
+
+import { AlertModalService } from '../../shared/alert-modal.service';
+import { Cursos2Service } from '../cursos2.service';
 
 @Component({
   selector: 'app-cursos-form',
@@ -17,43 +17,40 @@ export class CursosFormComponent implements OnInit {
   submitted: boolean = false;
 
   constructor(private fb: FormBuilder,
-    private service: CursosService,
+    private service: Cursos2Service,
     private alertModal: AlertModalService,
     private location: Location,
-    private route: ActivatedRoute,
-  ) {
+    private route: ActivatedRoute) {
+
+    const curso = this.route.snapshot.data['curso'];
+
     this.form = this.fb.group({
-      id: [null],
-      nome: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(250)]]
+      id: [curso.id],
+      nome: [curso.nome, [Validators.required, Validators.minLength(3), Validators.maxLength(250)]]
     })
   }
 
   ngOnInit(): void {
-    // this.route.params.subscribe(
-    //   (params: any) => {
-    //     const id = params['id'];
-    //     console.log(id);
-    //     const curso$ = this.service.loadByID(id);
-    //     curso$.subscribe(curso => {
-    //       this.updateForm(curso);
-    //     })
-    //   }
-    // )
 
-    this.route.params
-      .pipe(
-        map((params: any) => params['id']),
-        switchMap((id: any) => this.service.loadByID(id))
-      )
-      .subscribe(curso => this.updateForm(curso))
+    // this.route.params
+    //   .pipe(
+    //     map((params: any) => params['id']),
+    //     switchMap((id: any) => this.service.loadByID(id))
+    //   )
+    //   .subscribe(curso => this.updateForm(curso))
+
+      // concatMap => ordem da requisição importa
+      // mergeMap => ordem não importa
+      // exhaustMap => casos de login ( vai fazer a requisição e obter a resposta antes de partir pra uma segunda tentativa )
+
   }
 
-  updateForm(curso: any) {
-    this.form.patchValue({
-      id: curso.id,
-      nome: curso.nome,
-    })
-  }
+  // updateForm(curso: any) {
+  //   this.form.patchValue({
+  //     id: curso.id,
+  //     nome: curso.nome,
+  //   })
+  // }
 
   hasError(field: string) {
     return this.form.get(field)?.errors;
@@ -76,22 +73,51 @@ export class CursosFormComponent implements OnInit {
     this.submitted = true;
     console.log(this.form.value);
     if (this.form.valid) {
-      this.service.create(this.form.value).subscribe(
+      console.log('Submit');
+
+      let msgSuccess = 'Curso criado com sucesso!!!';
+      let msgError = 'Erro ao criar curso, tente novamente!';
+      if(this.form.value.id) {
+        console.log(this.form.value.id)
+        msgSuccess = 'Curso atualizado com sucesso!!!';
+        msgError = 'Erro ao atualizar curso, tente novamente';
+      }
+
+      this.service.save(this.form.value).subscribe(
         success => {
-          this.alertModal.showAlertSuccessr('Curso criado com sucesso!!!');
+          this.alertModal.showAlertSuccessr(msgSuccess);
           this.location.back();
         },
-        error => this.alertModal.showAlertDanger('Erro ao criar curso, tente novamente'),
-        () => console.log('request completo')
-      )
-      console.log('submit');
+        error => this.alertModal.showAlertDanger(msgError)
+      );
+
+      /*if(this.form.value.id) {
+        // update
+        this.service.update(this.form.value).subscribe(
+          success => {
+            this.alertModal.showAlertSuccessr('Curso atualizado com sucesso!!!');
+            this.location.back();
+          },
+          error => this.alertModal.showAlertDanger('Erro ao atualizar curso, tente novamente'),
+          () => console.log('update completo')
+        )
+      } else {
+        this.service.create(this.form.value).subscribe(
+          success => {
+            this.alertModal.showAlertSuccessr('Curso criado com sucesso!!!');
+            this.location.back();
+          },
+          error => this.alertModal.showAlertDanger('Erro ao criar curso, tente novamente'),
+          () => console.log('request completo')
+        )
+      }*/
     }
   }
 
   onCancel() {
     this.submitted = false;
     this.form.reset();
-    console.log('onCancel');
+    //console.log('onCancel');
   }
 
 

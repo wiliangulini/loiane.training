@@ -11,23 +11,23 @@
   <div class="card-body">
     <table class="table" *ngIf="cursos$ | async as cursos; else loading">
       <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Curso</th>
-        <th></th>
-      </tr>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Curso</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let curso of cursos">
-        <th style="vertical-align: middle;">{{ curso.id }}</th>
-        <td style="vertical-align: middle;">{{ curso.nome }}</td>
-        <td>
-          <span class="d-flex justify-content-end">
-            <button class="btn btn-outline-warning m-1 btn-sm" (click)="onEdit(curso.id)">Atualizar</button>
-            <button class="btn btn-outline-danger m-1 btn-sm">Remover</button>
-          </span>
-        </td>
-      </tr>
+        <tr *ngFor="let curso of cursos">
+          <th style="vertical-align: middle;">{{ curso.id }}</th>
+          <td style="vertical-align: middle;">{{ curso.nome }}</td>
+          <td>
+            <span class="d-flex justify-content-end">
+              <button class="btn btn-outline-warning m-1 btn-sm" (click)="onEdit(curso.id)">Atualizar</button>
+              <button class="btn btn-outline-danger m-1 btn-sm" (click)="onDelete(curso)">Remover</button>
+            </span>
+          </td>
+        </tr>
       </tbody>
     </table>
 
@@ -35,14 +35,21 @@
       <span>Carregando Cursos...</span>
     </ng-template>
 
-<!--    <ng-template #loadingError>-->
-<!--      <div *ngIf="error$ | async; else loading">-->
-<!--        Erro ao carregar cursos. Tente novamente mais tarde.-->
-<!--      </div>-->
-<!--      <ng-template #loading>-->
-<!--        <span>Carregando Cursos...</span>-->
-<!--      </ng-template>-->
-<!--    </ng-template>-->
+    <!--    <ng-template #loadingError>-->
+    <!--      <div *ngIf="error$ | async; else loading">-->
+    <!--        Erro ao carregar cursos. Tente novamente mais tarde.-->
+    <!--      </div>-->
+    <!--      <ng-template #loading>-->
+    <!--        <span>Carregando Cursos...</span>-->
+    <!--      </ng-template>-->
+    <!--    </ng-template>-->
   </div>
 </div>
 
+<ng-template #deleteModal>
+  <div class="modal-body text-center">
+    <p>Tem certeza que deseja remover esse curso?</p>
+    <button type="button" class="btn btn-default" (click)="onConfirmDelete()">Sim</button>
+    <button type="button" class="btn btn-primary" (click)="onDeclineDelete()">Não</button>
+  </div>
+</ng-template>

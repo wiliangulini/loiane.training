@@ -1,5 +1,5 @@
 http://localhost:3000/cursos
-Accept: application/json
+//Accept: application/json
 ###
 
 GET http://localhost:3000/cursos/1
@@ -13,10 +13,10 @@ Content-Type: application/json
 
 ####
 
-PUT http://localhost:3000/cursos/4
+PUT http://localhost:3000/cursos/3
 Content-Type: application/json
 
-{ "nome": "Java2" }
+{ "nome": "Angular v14" }
 
 ###
 

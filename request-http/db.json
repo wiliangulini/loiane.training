@@ -5,28 +5,20 @@
       "id": 1
     },
     {
-      "nome": "Angular",
-      "id": 3
-    },
-    {
-      "nome": "Java2",
-      "id": 4
+      "id": 3,
+      "nome": "Angular"
     },
     {
       "nome": "TypeScript",
       "id": 5
     },
     {
-      "nome": "Material",
-      "id": 6
-    },
-    {
       "nome": "Java",
       "id": 7
     },
     {
-      "nome": "NodeJS",
-      "id": 8
+      "id": 8,
+      "nome": "NodeJS"
     }
   ]
 }
